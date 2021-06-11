@@ -1,324 +1,144 @@
-// liste_doublement_chainee.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Element_entier {
+typedef struct Element Element;
+struct Element
+{
+    int entier;
+    Element* suivant;
+};
 
-	int n_entier;
-	Element_entier* p_suivant;
-	Element_entier* p_precedent;
+typedef struct Pile
+{
+    Element* sommet;
+    int taille;
+}Pile;
 
-}Element_entier;
+typedef enum class Bool {
 
-typedef struct Liste_entiers {
+    True, False
 
-	Element_entier* element_debut;
-	Element_entier* element_fin;
-	int n_taille;
-
-}Liste_entiers;
+}Bool;
 
 
-void initialisation(Liste_entiers* liste);
-int insertListeVide(Liste_entiers* liste, int n_val);
-int insertDebutListe(Liste_entiers* liste, int n_val);
-int insertFinListe(Liste_entiers* liste, int n_val);
-int insertAvant(Liste_entiers* liste, int n_val, int n_pos);
-int insertApres(Liste_entiers* liste, int n_val, int n_pos);
-int suppPosListe(Liste_entiers* liste, int n_pos);
-void afficheListe(Liste_entiers* liste);
-void detruire(Liste_entiers* liste);
+Pile* initialiser();
+void empiler(Pile* pile, int val);
+void afficherPile(Pile* pile);
+int depiler(Pile* pile);
+enum Bool pileVide(Pile* pile);
 
 
 int main()
 {
-	Liste_entiers* liste = NULL;
-	liste = (Liste_entiers*)malloc(sizeof(Liste_entiers));
 
-	initialisation(liste);
+    int i;
+    Pile* maPile = initialiser();
+    for (i = 0; i <= 10; i++)
+        empiler(maPile, i);
 
-	if (insertListeVide(liste, 1)) {
+    printf("Taille de la pile :%d\n", maPile->taille);
 
-		printf("insertion dans liste vide ok\n");
-	}
-	else {
+    afficherPile(maPile);
 
-		printf("insertion impossible\n");
-	}
+    while (maPile->sommet != NULL) {
 
-	if (insertDebutListe(liste, 2)) {
+        depiler(maPile);
+        afficherPile(maPile);
 
-		printf("insertion en début de liste ok\n");
-	}
-	else {
-
-		printf("insertion impossible\n");
-	}
-
-	if (insertFinListe(liste, 3)) {
-
-		printf("insertion en début de liste ok\n");
-	}
-	else {
-
-		printf("insertion impossible\n");
-	}
-
-	if (insertAvant(liste, 4, 3)) {
-
-		printf("insertion en début de liste ok\n");
-	}
-	else {
-
-		printf("insertion impossible\n");
-	}
-
-	if (insertApres(liste, 5, 2)) {
-
-		printf("insertion en début de liste ok\n");
-	}
-	else {
-
-		printf("insertion impossible\n");
-	}
-
-	afficheListe(liste);
-
-	suppPosListe(liste, 3);
-
-	afficheListe(liste);
-
-	detruire(liste);
+    }
+    printf("Taille de la pile :%d\n", maPile->taille);
 
 
 
-	free(liste);
+    if (pileVide(maPile) == Bool::True)
+        printf("Pile vide");
 
-	return 0;
+
+
+
+
+    return 0;
 }
 
 
-
-void initialisation(Liste_entiers* liste) {
-
-	liste->element_debut = NULL;
-	liste->element_fin = NULL;
-	liste->n_taille = 0;
-
-}
-
-
-
-int insertListeVide(Liste_entiers* liste, int n_val) {
-
-	Element_entier* elem = NULL;
-	elem = (Element_entier*)malloc(sizeof(Element_entier));
-
-	if (elem == NULL) {
-		return 0;
-	}
-	else {
-		elem->n_entier = n_val;
-
-		elem->p_precedent = liste->element_debut;
-		elem->p_suivant = liste->element_debut;
-		liste->element_debut = elem;
-		liste->element_fin = elem;
-		liste->n_taille++;
-		return 1;
-
-	}
-
-}
-
-int insertDebutListe(Liste_entiers* liste, int n_val)
+Pile* initialiser()
 {
-	Element_entier* elem = NULL;
-	elem = (Element_entier*)malloc(sizeof(Element_entier));
+    Pile* pile = NULL;
+    pile = (Pile*)malloc(sizeof(*pile));
+    if (pile) {
+        pile->sommet = NULL;
+        pile->taille = 0;
+    }
 
-	if (elem == NULL) {
-		return 0;
-	}
-	else {
-		elem->n_entier = n_val;
-		elem->p_precedent = NULL;
-		elem->p_suivant = liste->element_debut;
-		liste->element_debut->p_precedent = elem;
-		liste->element_debut = elem;
-		liste->n_taille++;
-		return 1;
-	}
-
-
+    return pile;
 }
 
-int insertFinListe(Liste_entiers* liste, int n_val)
+void empiler(Pile* pile, int val)
 {
-	Element_entier* elem = NULL;
-	elem = (Element_entier*)malloc(sizeof(Element_entier));
+    Element* nouveau = (Element*)malloc(sizeof(*nouveau));
+    if (pile == NULL || nouveau == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
 
-	if (elem == NULL) {
-		return 0;
-	}
-	else {
-		elem->n_entier = n_val;
-		elem->p_suivant = NULL;
-		elem->p_precedent = liste->element_fin;
-		liste->element_fin->p_suivant = elem;
-		liste->element_fin = elem;
-		liste->n_taille++;
-		return 1;
-	}
-
+    nouveau->entier = val;
+    nouveau->suivant = pile->sommet;
+    pile->sommet = nouveau;
+    pile->taille++;
 }
 
-int insertAvant(Liste_entiers* liste, int n_val, int n_pos)
+
+
+void afficherPile(Pile* pile)
 {
+    if (pile == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+    Element* actuel = pile->sommet;
 
+    while (actuel != NULL)
+    {
+        printf("%d\n", actuel->entier);
+        actuel = actuel->suivant;
+    }
 
-
-	Element_entier* elem = NULL;
-	Element_entier* courant = NULL;
-	elem = (Element_entier*)malloc(sizeof(Element_entier));
-	int n_i = 0;
-
-	courant = liste->element_debut;
-
-	if (elem == NULL) {
-		return 0;
-	}
-	else {
-		elem->n_entier = n_val;
-		for (n_i = 1; n_i < n_pos; n_i++) {
-
-			courant = courant->p_suivant;
-
-		}
-		elem->p_suivant = courant;
-		elem->p_precedent = courant->p_precedent;
-
-		if (courant->p_precedent == NULL) {
-			liste->element_debut = elem;
-		}
-		else {
-			courant->p_precedent->p_suivant = elem;
-		}
-
-		if (courant)
-			courant->p_precedent = elem;
-
-		liste->n_taille++;
-
-		return 1;
-
-	}
+    printf("\n");
 }
 
-
-int insertApres(Liste_entiers* liste, int n_val, int n_pos)
+int depiler(Pile* pile)
 {
+    if (pile == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
 
-	Element_entier* elem = NULL;
-	Element_entier* courant = NULL;
-	elem = (Element_entier*)malloc(sizeof(Element_entier));
-	int n_i = 0;
+    int nombreDepile = 0;
+    Element* elementDepile = pile->sommet;
 
-	courant = liste->element_debut;
+    if (pile != NULL && pile->sommet != NULL)
+    {
+        nombreDepile = elementDepile->entier;
+        pile->sommet = elementDepile->suivant;
+        free(elementDepile);
+        pile->taille--;
+    }
 
-	if (elem == NULL) {
-		return 0;
-	}
-	else {
-		elem->n_entier = n_val;
-		for (n_i = 1; n_i < n_pos; n_i++) {
-
-			courant = courant->p_suivant;
-
-		}
-		elem->p_suivant = courant->p_suivant;
-		elem->p_precedent = courant;
-
-		if (courant->p_suivant == NULL) {
-			liste->element_fin = elem;
-		}
-		else {
-			courant->p_suivant->p_precedent = elem;
-		}
-
-		if (courant)
-			courant->p_suivant = elem;
-
-		liste->n_taille++;
-
-		return 1;
-
-	}
+    return nombreDepile;
 }
 
-
-int suppPosListe(Liste_entiers* liste, int n_pos)
-{
-	if (liste->n_taille == 0)
-		return 0;
-
-	int n_i = 0;
-	Element_entier* courant = NULL;
-	Element_entier* supp = NULL;
+enum Bool pileVide(Pile* pile) {
 
 
-	if (n_pos == 1) {
-		supp = liste->element_debut;
-		liste->element_debut = liste->element_debut->p_suivant;
-		if (liste->element_debut == NULL)
-			liste->element_fin = NULL;
-		else
-			liste->element_fin->p_precedent = NULL;
+    enum  Bool vide = Bool::False;
 
-	}
-	else if (n_pos == liste->n_taille) {
-		supp = liste->element_fin;
-		liste->element_fin->p_precedent->p_suivant = NULL;
-		liste->element_fin = liste->element_fin->p_precedent;
-	}
-	else {
 
-		courant = liste->element_debut;
-		for (n_i = 1; n_i < n_pos; n_i++) {
-			courant = courant->p_suivant;
-		}
-		supp = courant;
-		courant->p_precedent->p_suivant = courant->p_suivant;
-		courant->p_suivant->p_precedent = courant->p_precedent;
-	}
-	free(supp);
-	liste->n_taille--;
+    if (pile->sommet == NULL) {
 
-	return 1;
+        vide = Bool::True;
 
+    }
+
+    return vide;
 }
 
-
-void afficheListe(Liste_entiers* liste) {
-
-	Element_entier* courant = NULL;
-	courant = liste->element_debut;
-	while (courant != NULL)
-	{
-		printf("%d\n", courant->n_entier);
-		courant = courant->p_suivant;
-
-	}
-
-
-}
-
-
-void detruire(Liste_entiers* liste) {
-
-	while (liste->n_taille > 0) {
-		suppPosListe(liste, 1);
-	}
-
-}
