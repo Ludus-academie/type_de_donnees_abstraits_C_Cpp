@@ -1,282 +1,324 @@
-#include<stdio.h>
-#include<stdlib.h>
+// liste_doublement_chainee.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
 
-#define TAILLE 10
-
-//Liste Simplement chainée
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct Element_entier {
 
 	int n_entier;
 	Element_entier* p_suivant;
-}Element_entier;
+	Element_entier* p_precedent;
 
+}Element_entier;
 
 typedef struct Liste_entiers {
 
 	Element_entier* element_debut;
 	Element_entier* element_fin;
-
 	int n_taille;
 
 }Liste_entiers;
 
 
-void initialisation(Liste_entiers* Liste);
-int insertListeVide(Liste_entiers* Liste, int n_val);
-int insertDebutListe(Liste_entiers* Liste, int n_val);
-int insertFinListe(Liste_entiers* Liste, Element_entier* courant, int n_val);
-int insertPosListe(Liste_entiers* Liste, int n_pos, int n_val);
-int suppDebut(Liste_entiers* Liste);
-int suppPosListe(Liste_entiers* Liste, int n_pos);
-int destructListe(Liste_entiers* liste);
-void afficheListe(Liste_entiers* Liste);
+void initialisation(Liste_entiers* liste);
+int insertListeVide(Liste_entiers* liste, int n_val);
+int insertDebutListe(Liste_entiers* liste, int n_val);
+int insertFinListe(Liste_entiers* liste, int n_val);
+int insertAvant(Liste_entiers* liste, int n_val, int n_pos);
+int insertApres(Liste_entiers* liste, int n_val, int n_pos);
+int suppPosListe(Liste_entiers* liste, int n_pos);
+void afficheListe(Liste_entiers* liste);
+void detruire(Liste_entiers* liste);
 
 
+int main()
+{
+	Liste_entiers* liste = NULL;
+	liste = (Liste_entiers*)malloc(sizeof(Liste_entiers));
 
-int main() {
+	initialisation(liste);
 
-	Liste_entiers* Liste = NULL;
-	Liste = (Liste_entiers*)malloc(sizeof(Liste_entiers));
+	if (insertListeVide(liste, 1)) {
 
-	initialisation(Liste);
+		printf("insertion dans liste vide ok\n");
+	}
+	else {
 
-	if (insertListeVide(Liste, 1)) {
-
-		printf("Insert dans liste vide ok\n");
+		printf("insertion impossible\n");
 	}
 
-	if (insertDebutListe(Liste, 2)) {
+	if (insertDebutListe(liste, 2)) {
 
-		printf("Insert en debut de liste ok\n");
+		printf("insertion en début de liste ok\n");
+	}
+	else {
+
+		printf("insertion impossible\n");
 	}
 
-	if (Liste && insertFinListe(Liste, Liste->element_fin, 3)) {
+	if (insertFinListe(liste, 3)) {
 
-		printf("Insert en fin de liste ok\n");
+		printf("insertion en début de liste ok\n");
+	}
+	else {
+
+		printf("insertion impossible\n");
 	}
 
-	if (insertPosListe(Liste, 3, 4)) {
-		printf("insert à la position ok\n");
+	if (insertAvant(liste, 4, 3)) {
+
+		printf("insertion en début de liste ok\n");
+	}
+	else {
+
+		printf("insertion impossible\n");
 	}
 
-	afficheListe(Liste);
+	if (insertApres(liste, 5, 2)) {
 
-	//suppDebut(Liste);
+		printf("insertion en début de liste ok\n");
+	}
+	else {
 
-	if (suppPosListe(Liste, 3)) {
-
-		printf("Supp pos ok\n");
+		printf("insertion impossible\n");
 	}
 
-	afficheListe(Liste);
+	afficheListe(liste);
 
-	if (destructListe(Liste)) {
+	suppPosListe(liste, 3);
 
-		printf("Destruction liste\n");
-	}
+	afficheListe(liste);
 
-
-	free(Liste);
+	detruire(liste);
 
 
-	
+
+	free(liste);
+
 	return 0;
 }
 
 
-void initialisation(Liste_entiers* Liste) {
 
-	Liste->element_debut = NULL;
-	Liste->element_fin = NULL;
-	Liste->n_taille = 0;
+void initialisation(Liste_entiers* liste) {
 
-
-}
-
-int insertListeVide(Liste_entiers* Liste, int n_val) {
-
-	Element_entier* element = NULL;
-	element = (Element_entier*)malloc(sizeof(Element_entier));
-
-	if (element == NULL) {
-
-		return 0;
-	}
-	else {
-
-		element->n_entier = n_val;
-		element->p_suivant = NULL;
-		Liste->element_debut = element;
-		Liste->element_fin = element;
-		Liste->n_taille++;
-
-		return 1;
-
-	}
-
-
+	liste->element_debut = NULL;
+	liste->element_fin = NULL;
+	liste->n_taille = 0;
 
 }
 
 
-int insertDebutListe(Liste_entiers* Liste, int n_val) {
 
-	Element_entier* element = NULL;
-	element = (Element_entier*)malloc(sizeof(Element_entier));
+int insertListeVide(Liste_entiers* liste, int n_val) {
 
-	if (element == NULL) {
+	Element_entier* elem = NULL;
+	elem = (Element_entier*)malloc(sizeof(Element_entier));
 
+	if (elem == NULL) {
 		return 0;
 	}
 	else {
+		elem->n_entier = n_val;
 
-		element->n_entier = n_val;
-		element->p_suivant = Liste->element_debut;
-		Liste->element_debut = element;
-		Liste->n_taille++;
-
-		return 1;
-
-	}
-
-
-}
-
-int insertFinListe(Liste_entiers* Liste, Element_entier* courant, int n_val) {
-
-	Element_entier* element = NULL;
-	element = (Element_entier*)malloc(sizeof(Element_entier));
-
-	if (element == NULL) {
-
-		return 0;
-	}
-	else {
-
-		element->n_entier = n_val;
-		courant->p_suivant = element;
-		element->p_suivant = NULL;
-		Liste->element_fin = element;
-		Liste->n_taille++;
-
+		elem->p_precedent = liste->element_debut;
+		elem->p_suivant = liste->element_debut;
+		liste->element_debut = elem;
+		liste->element_fin = elem;
+		liste->n_taille++;
 		return 1;
 
 	}
 
 }
 
+int insertDebutListe(Liste_entiers* liste, int n_val)
+{
+	Element_entier* elem = NULL;
+	elem = (Element_entier*)malloc(sizeof(Element_entier));
 
-int insertPosListe(Liste_entiers* Liste, int n_pos, int n_val) {
-
-
-	if (Liste->n_taille < 2) {
+	if (elem == NULL) {
 		return 0;
 	}
-
-	if (n_pos<1 || n_pos>Liste->n_taille) {
-		return 0;
+	else {
+		elem->n_entier = n_val;
+		elem->p_precedent = NULL;
+		elem->p_suivant = liste->element_debut;
+		liste->element_debut->p_precedent = elem;
+		liste->element_debut = elem;
+		liste->n_taille++;
+		return 1;
 	}
 
-	Element_entier *element = NULL;
+
+}
+
+int insertFinListe(Liste_entiers* liste, int n_val)
+{
+	Element_entier* elem = NULL;
+	elem = (Element_entier*)malloc(sizeof(Element_entier));
+
+	if (elem == NULL) {
+		return 0;
+	}
+	else {
+		elem->n_entier = n_val;
+		elem->p_suivant = NULL;
+		elem->p_precedent = liste->element_fin;
+		liste->element_fin->p_suivant = elem;
+		liste->element_fin = elem;
+		liste->n_taille++;
+		return 1;
+	}
+
+}
+
+int insertAvant(Liste_entiers* liste, int n_val, int n_pos)
+{
+
+
+
+	Element_entier* elem = NULL;
 	Element_entier* courant = NULL;
-	element = (Element_entier*)malloc(sizeof(Element_entier));
+	elem = (Element_entier*)malloc(sizeof(Element_entier));
+	int n_i = 0;
 
-	courant = Liste->element_debut;
+	courant = liste->element_debut;
 
-	if (element == NULL) {
-
+	if (elem == NULL) {
 		return 0;
-
 	}
 	else {
+		elem->n_entier = n_val;
+		for (n_i = 1; n_i < n_pos; n_i++) {
 
-		for (int n_i = 1; n_i < n_pos - 1; n_i++) {
-			
 			courant = courant->p_suivant;
+
 		}
+		elem->p_suivant = courant;
+		elem->p_precedent = courant->p_precedent;
+
+		if (courant->p_precedent == NULL) {
+			liste->element_debut = elem;
+		}
+		else {
+			courant->p_precedent->p_suivant = elem;
+		}
+
+		if (courant)
+			courant->p_precedent = elem;
+
+		liste->n_taille++;
+
+		return 1;
+
+	}
+}
+
+
+int insertApres(Liste_entiers* liste, int n_val, int n_pos)
+{
+
+	Element_entier* elem = NULL;
+	Element_entier* courant = NULL;
+	elem = (Element_entier*)malloc(sizeof(Element_entier));
+	int n_i = 0;
+
+	courant = liste->element_debut;
+
+	if (elem == NULL) {
+		return 0;
+	}
+	else {
+		elem->n_entier = n_val;
+		for (n_i = 1; n_i < n_pos; n_i++) {
+
+			courant = courant->p_suivant;
+
+		}
+		elem->p_suivant = courant->p_suivant;
+		elem->p_precedent = courant;
 
 		if (courant->p_suivant == NULL) {
-			return 0;
+			liste->element_fin = elem;
+		}
+		else {
+			courant->p_suivant->p_precedent = elem;
 		}
 
-		element->n_entier = n_val;
-		element->p_suivant = courant->p_suivant;
-		courant->p_suivant = element;
-		Liste->n_taille++;
+		if (courant)
+			courant->p_suivant = elem;
+
+		liste->n_taille++;
 
 		return 1;
-	}
 
+	}
 }
 
 
-int suppDebut(Liste_entiers* Liste) {
-
-	if (Liste->n_taille == 0)
-		return 0;
-
-	Element_entier* supp = NULL;
-	supp = Liste->element_debut;
-	Liste->element_debut = Liste->element_debut->p_suivant;
-
-	if (Liste->n_taille == 1){
-		Liste->element_fin = NULL;
-	}
-
-	free(supp);
-	Liste->n_taille--;
-
-	return 1;
-
-}
-
-int suppPosListe(Liste_entiers* Liste, int n_pos) {
-
-	if (Liste->n_taille <= 1 || n_pos < 1 || n_pos >= Liste->n_taille)
-		return 0;
-
-	Element_entier* supp = NULL;
-	Element_entier* courant = NULL;
-
-	courant = Liste->element_debut;
-
-	for (int n_i = 1; n_i < n_pos - 1; n_i++) {
-
-		courant = courant->p_suivant;
-	}
-
-	supp = courant->p_suivant;
-	courant->p_suivant = courant->p_suivant->p_suivant;
-	if (courant->p_suivant == NULL)
-		Liste->element_fin = courant;
-
-	free(supp);
-	Liste->n_taille--;
-	
-	return 1;
-
-}
-
-int destructListe(Liste_entiers* liste) {
-
+int suppPosListe(Liste_entiers* liste, int n_pos)
+{
 	if (liste->n_taille == 0)
 		return 0;
 
-	while (liste->n_taille > 0)
-		suppDebut(liste);
+	int n_i = 0;
+	Element_entier* courant = NULL;
+	Element_entier* supp = NULL;
+
+
+	if (n_pos == 1) {
+		supp = liste->element_debut;
+		liste->element_debut = liste->element_debut->p_suivant;
+		if (liste->element_debut == NULL)
+			liste->element_fin = NULL;
+		else
+			liste->element_fin->p_precedent = NULL;
+
+	}
+	else if (n_pos == liste->n_taille) {
+		supp = liste->element_fin;
+		liste->element_fin->p_precedent->p_suivant = NULL;
+		liste->element_fin = liste->element_fin->p_precedent;
+	}
+	else {
+
+		courant = liste->element_debut;
+		for (n_i = 1; n_i < n_pos; n_i++) {
+			courant = courant->p_suivant;
+		}
+		supp = courant;
+		courant->p_precedent->p_suivant = courant->p_suivant;
+		courant->p_suivant->p_precedent = courant->p_precedent;
+	}
+	free(supp);
+	liste->n_taille--;
 
 	return 1;
+
 }
 
-void afficheListe(Liste_entiers* Liste) {
+
+void afficheListe(Liste_entiers* liste) {
 
 	Element_entier* courant = NULL;
-	courant = Liste->element_debut;
-
+	courant = liste->element_debut;
 	while (courant != NULL)
 	{
 		printf("%d\n", courant->n_entier);
 		courant = courant->p_suivant;
+
 	}
+
+
+}
+
+
+void detruire(Liste_entiers* liste) {
+
+	while (liste->n_taille > 0) {
+		suppPosListe(liste, 1);
+	}
+
 }
